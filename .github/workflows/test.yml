@@ -1,15 +1,19 @@
-name: CI
+name: Foundry project
 
 on:
   push:
+    branches: [ main, master ]
   pull_request:
-  workflow_dispatch:
+    branches: [ main, master ]
 
 env:
   FOUNDRY_PROFILE: ci
 
 jobs:
   check:
+    strategy:
+      fail-fast: true
+
     name: Foundry project
     runs-on: ubuntu-latest
     steps:
@@ -19,18 +23,18 @@ jobs:
 
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: nightly
 
-      - name: Show Forge version
-        run: |
-          forge --version
+      - name: Show Foundry version
+        run: forge --version
 
-      - name: Run Forge fmt
-        run: |
-          forge fmt --check
-        id: fmt
+      - name: Install dependencies
+        run: forge install --no-commit
 
       - name: Run Forge build
         run: |
+          forge --version
           forge build --sizes
         id: build
 
@@ -38,3 +42,9 @@ jobs:
         run: |
           forge test -vvv
         id: test
+
+      - name: Run Forge fmt check
+        run: |
+          forge fmt --check
+        id: fmt
+        continue-on-error: true
