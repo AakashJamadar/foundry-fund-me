@@ -75,10 +75,18 @@ cast balance <CONTRACT_ADDRESS> --rpc-url $SEPOLIA_RPC_URL
 │   └── PriceConverter.sol  # Price conversion library
 ├── script/
 │   ├── DeployFundMe.s.sol  # Deployment script
+│   ├── HelperConfig.s.sol  # Network configuration
 │   └── Interactions.s.sol  # Interaction scripts
 ├── test/
-│   └── FundMeTest.t.sol    # Tests
-└── Makefile               # Build commands
+│   ├── integration/
+│   │   └── InteractionsTest.t.sol # Integration tests
+│   ├── mocks/
+│   │   └── MockV3Aggregator.sol   # Mock price feed
+│   └── unit/
+│       └── FundMeTest.t.sol       # Unit tests
+├── lib/                    # Dependencies
+├── Makefile               # Build commands
+└── foundry.toml          # Foundry configuration
 ```
 
 ## Key Contract Functions
