@@ -1,66 +1,99 @@
-## Foundry
+# FundMe Smart Contract 
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+A decentralized crowdfunding smart contract built with Solidity and Foundry. This is a learning project for understanding smart contract development.
 
-Foundry consists of:
+## Features
 
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+- Accept ETH donations with minimum funding requirements ($5 USD equivalent)
+- Uses Chainlink Price Feeds for ETH to USD conversion
+- Owner can withdraw all collected funds
+- Tracks all contributors and their funding amounts
 
-## Documentation
+## Prerequisites
 
-https://book.getfoundry.sh/
+- [Git](https://git-scm.com/)
+- [Foundry](https://getfoundry.sh/)
+
+## Installation
+
+```bash
+git clone https://github.com/AakashJamadar/foundry-fund-me.git
+cd foundry-fund-me
+forge install
+forge build
+```
+
+## Testing
+
+```bash
+forge test
+```
+
+## Deployment
+
+### Local Network (Anvil)
+```bash
+anvil
+make deploy
+```
+
+### Sepolia Testnet
+1. Create `.env` file with:
+```
+SEPOLIA_RPC_URL=your_sepolia_rpc_url
+PRIVATE_KEY=your_private_key
+ETHERSCAN_API_KEY=your_etherscan_api_key
+```
+
+2. Deploy:
+```bash
+make deploy-sepolia
+```
 
 ## Usage
 
-### Build
-
-```shell
-$ forge build
+### Fund the Contract
+```bash
+cast send <CONTRACT_ADDRESS> "fund()" --value 0.1ether --rpc-url $SEPOLIA_RPC_URL --private-key $PRIVATE_KEY
 ```
 
-### Test
-
-```shell
-$ forge test
+### Withdraw Funds (Owner only)
+```bash
+cast send <CONTRACT_ADDRESS> "withdraw()" --rpc-url $SEPOLIA_RPC_URL --private-key $PRIVATE_KEY
 ```
 
-### Format
-
-```shell
-$ forge fmt
+### Check Contract Balance
+```bash
+cast balance <CONTRACT_ADDRESS> --rpc-url $SEPOLIA_RPC_URL
 ```
 
-### Gas Snapshots
+## Project Structure
 
-```shell
-$ forge snapshot
+```
+├── src/
+│   ├── FundMe.sol          # Main contract
+│   └── PriceConverter.sol  # Price conversion library
+├── script/
+│   ├── DeployFundMe.s.sol  # Deployment script
+│   └── Interactions.s.sol  # Interaction scripts
+├── test/
+│   └── FundMeTest.t.sol    # Tests
+└── Makefile               # Build commands
 ```
 
-### Anvil
+## Key Contract Functions
 
-```shell
-$ anvil
-```
+- `fund()` - Send ETH to the contract (minimum $5 USD)
+- `withdraw()` - Withdraw all funds (owner only)
+- `getFunderFromIndex(uint256)` - Get funder by index
+- `getAddressToAmountFunded(address)` - Get amount funded by address
 
-### Deploy
+## Networks Supported
 
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
+- **Ethereum Mainnet**
+- **Sepolia Testnet** 
+- **Local Network** (with mock price feeds)
 
-### Cast
+## License
 
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
+MIT
